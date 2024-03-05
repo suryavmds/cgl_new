@@ -8,7 +8,7 @@ import showToast from '@/utility/showToast';
 const CheckUserAccess = (props) => {
     const router = useRouter();
     const { status, data } = useSession();
-    const [userAccess, setUserAccess] = useState({})
+    const [userInfo, setUserInfo] = useState({})
     
     const context = useContext(AppContext)
     useEffect(() => {
@@ -25,10 +25,12 @@ const CheckUserAccess = (props) => {
 
                 const result = await response.json()
 
-                if(result.status === 'success' && result.result.length){
-                    const userAccess = result.result[0];
-                    setUserAccess(userAccess)
-                    context.setUserAccess(userAccess)
+                console.log(result)
+
+                if(result.status === 'success' && result.result){
+                    const userInfo = result.result;
+                    setUserInfo(userInfo)
+                    context.setUserInfo(userInfo)
                     return;
                 }
                 console.log(result)
@@ -39,12 +41,12 @@ const CheckUserAccess = (props) => {
             }
         }
 
-        if(status === 'authenticated' && !Object.keys(context.userAccess).length){
+        if(status === 'authenticated' && !Object.keys(context.userInfo).length){
             fetchDetails();
         }
     }, [status]);
 
-    if(Object.keys(context.userAccess).length){
+    if(Object.keys(context.userInfo).length){
         return(
             <>
                {props.children}
