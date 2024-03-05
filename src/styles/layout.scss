@@ -1,0 +1,169 @@
+@import 'breakpoint';
+*{
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    background-color: #111111;
+}
+
+.cdx_overloading{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #111111;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    pointer-events: auto;
+
+    svg{
+        animation: spin .5s infinite;
+        color: #FBB13C;
+    }
+
+}
+
+.login_page{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .login_wrap{
+        background-color: #181818;
+        width: 80%;
+        max-width: 600px;
+        padding: 25px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+
+        .top_header{
+
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 20px;
+
+            button{
+                background-color: #242424;
+                color: #FFFFFF;
+                border-radius: 40px;
+                padding: 20px 40px;
+                border: 1px solid transparent;
+                outline: none;
+                flex: 1;
+                
+                font-size: 20px;
+                cursor: pointer;
+                
+                &.active{
+                    border: 1px solid #FBB13C;
+                    color: #FBB13C;
+                }
+            }
+        }
+
+        .middle_form{
+            flex-direction: column;
+            display: flex;
+            gap: 15px;
+
+            .form_element{
+                width: 100%;
+                background-color: #242424;
+
+                input{
+                    width: 100%;
+                    height: 45px;
+                    background-color: transparent;
+                    color: white;
+                    border: none;
+                    outline: none;
+                    padding: 15px;
+                }
+            }
+        }
+
+        .social_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img{
+                height: 45px;
+                cursor: pointer;
+            }
+        }
+
+        .footer{
+            display: flex;
+            justify-content: center;
+            a{
+                color: #FBB13C;
+                font-size: 14px;
+                text-align: center;
+            }
+        }
+    }
+}
+
+.cgl_primary_btn{
+    border: none;
+    outline: none;
+    background-color: #FBB13C;
+    color: #181818;
+    padding: 15px;
+    font-size: 15px;
+    cursor: pointer;
+    
+    &.rounded{
+        border-radius: 40px;
+    }
+}
+
+main{
+    padding: 40px;
+}
+
+.main_gamelist{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .cgl_gameitem{
+        width: 200px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #242424;
+        border-radius: 40px;
+        padding: 5px;
+        cursor: pointer;
+
+        &.active{
+            border: 1px solid #FBB13C;
+        }
+    }
+}
