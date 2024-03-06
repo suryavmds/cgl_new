@@ -2,7 +2,7 @@ import db from '@/lib/db';
 import { withAuth } from '../withAuth';
 import bcrypt from 'bcrypt';
 
-export default withAuth(async (req, res) => {
+export default (async (req, res) => {
     if (req.method === 'POST') {
         try {
             const { formValues, activeButton } = req.body;
