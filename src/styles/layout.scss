@@ -13,6 +13,16 @@ body {
     background-color: #111111;
 }
 
+.ant-btn-primary{
+    background-color: #FBB13C;
+    color: #111111;
+    
+    &:hover{
+        background-color: #EE9016 !important;
+        color: #111111 !important;
+    }
+}
+
 .cdx_overloading{
     position: absolute;
     width: 100%;
@@ -195,4 +205,84 @@ main{
             }
         }
     }
+}
+
+.tourn_list{
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+
+    .tourn_item{
+        color: #FFFFFF;
+        display: flex;
+        gap: 20px;
+        background-color: #181818;
+        cursor: pointer;
+
+        .content{
+            padding: 20px;
+            h1{
+                padding-bottom: 15px;
+            }
+
+            h4{
+                color: #848484;
+                font-weight: 300;
+                padding-bottom: 30px;
+            }
+
+            .tags{
+                display: flex;
+                gap: 15px;
+                font-size: 15px;
+                font-weight: 300;
+                color: #848484;
+            }
+        }
+    }
+
+    &.small{
+        padding: 0px;
+        .poster{
+            img{
+                height: 100px;
+            }
+        }
+
+        .tourn_item{
+            gap: 10px;
+    
+            .content{
+                padding: 10px;
+                h1{
+                    padding-bottom: 5px;
+                    font-size: 15px;
+                }
+    
+                h4{
+                    font-size: 13px;
+                    padding-bottom: 10px;
+                }
+    
+                .tags{
+                    gap: 5px;
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
+
+.text-white{
+    color: white;
+}
+
+.cgl_padding{
+    padding: 15px;
+}
+
+.pt-20{
+    margin-top: 20px;
 }

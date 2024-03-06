@@ -1,3 +1,5 @@
+import { PlusOutlined } from '@ant-design/icons'
+import { Button, Space } from 'antd'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import React from 'react'
@@ -21,6 +23,18 @@ const PlayerDashboard = () => {
         </li>
         </ul>
     </nav>
+
+    <div className='cgl_padding'>
+        <Space size={'large'}>
+            <div className='text-white'>My games</div>
+            <Link href={'/'}>
+            <Button type="primary">Join game <PlusOutlined /></Button>
+            </Link>
+        </Space>
+    </div>
+
+
+
     </main>
   )
 }
