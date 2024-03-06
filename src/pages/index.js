@@ -6,25 +6,51 @@ import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { FaCalendarAlt } from "react-icons/fa";
 import { GrGamepad } from "react-icons/gr";
+import { useState, useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const { data: session } = useSession();
+
+  const [triggerEffect, setTriggerEffect] = useState(false);
+  const [dataList, setDataList] = useState([]);
+
+  // const triggerCallback = () => {
+  //   setTriggerEffect(!triggerEffect)         
+  // }
+
+  const formatDateTime = (datetimeString) => {
+    const dateTime = new Date(datetimeString);
+    const date = dateTime.toLocaleDateString('en-US');
+    const time = dateTime.toLocaleTimeString('en-US');
+    return `${date} ${time}`;
+  };
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+    try {
+        // setTableLoading(true);
+        const response = await fetch('/api/tourney/fetchtourneys');
+        const data = await response.json();
+        if (data.status === 'success') {
+          setDataList(data.result.map(tournament => ({
+            ...tournament,
+            tournament_date: formatDateTime(tournament.tournament_date)
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // console.log("this is the data llist",dataList)
+
   return (
     <main>
-      {/* <section className="main_gamelist">
-        <div className="cgl_gameitem">
-          <img src="/gamelogo/pubg.png"></img>
-        </div>
-        <div className="cgl_gameitem active">
-          <img src="/gamelogo/apex.png"></img>
-        </div>
-        <div className="cgl_gameitem">
-          <img src="/gamelogo/cod.png"></img>
-        </div>
-      </section> */}
-
       <nav className='cgl_nav'>
         <div>
           <img alt="Logo" src='/cgl_logo.png' />
@@ -51,52 +77,24 @@ export default function Home() {
       </nav>
       
       <section className="tourn_list">
-
-        <div className='tourn_item'>
+      {dataList.map((tournament, index) => (
+        <div key={index} className='tourn_item'>
           <div className='poster'>
             <img src='/pubgbg.jpeg' alt='poster'></img>
           </div>
           <div className='content'>
-            <h1>Tournament Name</h1>
-            <h4>Hoster Name</h4>
+            <h1>{tournament.tournament_name}</h1>
+            <h4>Hoster Name :{tournament.username}</h4>
+            <h4>Entry Fee : {tournament.entry_fee}</h4>
+            <h4>Prize Money : {tournament.prize_money}</h4>
 
             <div className='tags'>
-              <h3><FaCalendarAlt /> June 15 - 08:00PM</h3>
-              <h3><GrGamepad /> 20/30 Joined</h3>
+              <h3><FaCalendarAlt /> {tournament.tournament_date}</h3>
+              <h3><GrGamepad /> {tournament.count}/30 Joined</h3>
             </div>
           </div>
         </div>
-
-        <div className='tourn_item'>
-          <div className='poster'>
-            <img src='/pubgbg.jpeg' alt='poster'></img>
-          </div>
-          <div className='content'>
-            <h1>Tournament Name</h1>
-            <h4>Hoster Name</h4>
-
-            <div className='tags'>
-              <h3><FaCalendarAlt /> June 15 - 08:00PM</h3>
-              <h3><GrGamepad /> June 15 - 08:00PM</h3>
-            </div>
-          </div>
-        </div>
-
-        <div className='tourn_item'>
-          <div className='poster'>
-            <img src='/pubgbg.jpeg' alt='poster'></img>
-          </div>
-          <div className='content'>
-            <h1>Tournament Name</h1>
-            <h4>Hoster Name</h4>
-
-            <div className='tags'>
-              <h3><FaCalendarAlt /> June 15 - 08:00PM</h3>
-              <h3><GrGamepad /> June 15 - 08:00PM</h3>
-            </div>
-          </div>
-        </div>
-
+          ))}
       </section>
     </main>
   )

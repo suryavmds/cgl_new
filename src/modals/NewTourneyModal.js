@@ -148,6 +148,11 @@ const NewTourneyDrawer = ({isOpen, showDrawer, triggerSuccess}) => {
                   //   required: true,
                   //   message: 'Please enter the city',
                   // },
+                  {
+                    pattern: /^\d+$/,
+                    message: 'Please enter only numbers',
+                  },
+              
                 ]}
               >
                 <Input name='prize_money' placeholder="Please enter the prize money" 
@@ -186,6 +191,11 @@ const NewTourneyDrawer = ({isOpen, showDrawer, triggerSuccess}) => {
                   //   required: true,
                   //   message: 'Please enter country',
                   // },
+                  {
+                    pattern: /^\d+$/,
+                    message: 'Please enter only numbers',
+                  },
+              
                 ]}
               >
                 <Input name='entry_fee' placeholder="Please enter your entry fee" 
