@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Button, Col, InputNumber, Modal, Row, Space } from 'antd'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { FaCalendarAlt } from 'react-icons/fa'
 import { GrGamepad } from 'react-icons/gr'
 import NewTourneyModal from '@/modals/NewTourneyModal'
@@ -24,6 +24,7 @@ const HosterDashboardPage = () => {
     const [walletAmount, setWalletAmount] = useState(0)
     const [isSubmitLoading, setSubmitLoading] = useState(false);
     const router = useRouter();
+    const [dataList, setDataList] = useState([]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -72,6 +73,33 @@ const HosterDashboardPage = () => {
     function formatCurrency(amount) {
         return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
+
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            // setTableLoading(true);
+            const response = await fetch('/api/tourney/fetchtourneys?userId='+context.userInfo.user_id);
+            const data = await response.json();
+            if (data.status === 'success') {
+            setDataList(data.result.map(tournament => ({
+                ...tournament,
+                tournament_date: formatDateTime(tournament.tournament_date)
+            })));
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        };
+        fetchData();
+    }, [triggerEffect]);
+
+
+  const formatDateTime = (datetimeString) => {
+    const dateTime = new Date(datetimeString);
+    const date = dateTime.toLocaleDateString('en-US');
+    const time = dateTime.toLocaleTimeString('en-US');
+    return `${date} ${time}`;
+  };
       
   return (
     <>
@@ -128,37 +156,26 @@ const HosterDashboardPage = () => {
 
         <section className="tourn_list small pt-20">
 
-            <div className='tourn_item'>
-            <div className='poster'>
-                <img src='/pubgbg.jpeg' alt='poster'></img>
-            </div>
-            <div className='content'>
-                <h1>Tournament Name</h1>
-                <h4>Hoster Name</h4>
+        {dataList.map((tournament, index) => (
+        <div key={index} className='tourn_item'>
+          <div className='poster'>
+            <img src='/pubgbg.jpeg' alt='poster'></img>
+          </div>
+          <div className='content'>
+            <h1>{tournament.tournament_name}</h1>
+            <h4>Hoster Name :{tournament.username}</h4>
+            <h4>Entry Fee : {tournament.entry_fee}</h4>
+            <h4>Prize Money : {tournament.prize_money}</h4>
 
-                <div className='tags'>
-                <h3><FaCalendarAlt /> June 15 - 08:00PM</h3>
-                <h3><GrGamepad /> 20/30 Joined</h3>
-                </div>
+            <div className='tags'>
+              <h3><FaCalendarAlt /> {tournament.tournament_date}</h3>
+              <h3><GrGamepad /> {tournament.count}/30 Joined</h3>
             </div>
-            </div>
+          </div>
+        </div>
+          ))}
 
-            <div className='tourn_item'>
-            <div className='poster'>
-                <img src='/pubgbg.jpeg' alt='poster'></img>
-            </div>
-            <div className='content'>
-                <h1>Tournament Name</h1>
-                <h4>Hoster Name</h4>
-
-                <div className='tags'>
-                <h3><FaCalendarAlt /> June 15 - 08:00PM</h3>
-                <h3><GrGamepad /> June 15 - 08:00PM</h3>
-                </div>
-            </div>
-            </div>
-
-            <div className='tourn_item'>
+            {/* <div className='tourn_item'>
             <div className='poster'>
                 <img src='/pubgbg.jpeg' alt='poster'></img>
             </div>
@@ -171,7 +188,7 @@ const HosterDashboardPage = () => {
                 <h3><GrGamepad /> June 15 - 08:00PM</h3>
                 </div>
             </div>
-            </div>
+            </div> */}
 
         </section>
     </div>
