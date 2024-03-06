@@ -1,10 +1,13 @@
 import showToast from '@/utility/showToast'
 import { Button, Form, Input } from 'antd'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import LoginAnim from '@/components/LoginAnim'
+// import lottie from 'lottie-web';
+
 
 const LoginPage = () => {
     const [formValues, setFormValues] = useState({
@@ -13,6 +16,7 @@ const LoginPage = () => {
     })
     const [isLoading, setLoading] = useState(false)
     const router = useRouter();
+    
 
     const inputHandler = (event) => {
         const {value, name} = event.target
@@ -34,7 +38,7 @@ const LoginPage = () => {
             });
             setLoading(false);
             if (res.error == null) {
-              router.replace(`/`);
+              router.replace(`/dashboard`);
             } else {
                 showToast(res.error, 'error');
             }
@@ -46,17 +50,19 @@ const LoginPage = () => {
   return (
     <section className='login_page'>
         <div className='login_wrap'>
-            <div className='top_header'>
+            {/* <div className='top_header'>
                 <button className='active'>Player</button>
                 <button>Organizer</button>
-            </div>
+            </div> */}
+            
+            <LoginAnim />
             <div className='middle_form'>
                 <div className='form_element'>
                     <input placeholder='Email' name={'email'} onChange={inputHandler}
                         value={formValues.email || ''}></input>
                 </div>
                 <div className='form_element'>
-                    <input placeholder='Password' name={'password'} onChange={inputHandler}
+                    <input type='password' placeholder='Password' name={'password'} onChange={inputHandler}
                         value={formValues.password || ''}></input>
                 </div>
             </div>
@@ -67,7 +73,7 @@ const LoginPage = () => {
             </div>
 
             <div className='footer'>
-                <Link className='' href={'#'}>Create new account</Link>
+                <Link className='' href={'/signup'}>Create new account</Link>
             </div>
         </div>
     </section>

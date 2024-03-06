@@ -3,13 +3,14 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import Link from 'next/link'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { FaCalendarAlt } from "react-icons/fa";
 import { GrGamepad } from "react-icons/gr";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const { data: session } = useSession();
   return (
     <main>
       {/* <section className="main_gamelist">
@@ -35,9 +36,17 @@ export default function Home() {
           <li>
             <Link href={'/dashboard'}>Dashboard</Link>
           </li>
+          {
+            (session) ? 
+            <li>
+              <Link href={'#'} onClick={signOut}>Logout</Link>
+            </li> : 
+            <></>
+          }
           <li>
-            <Link href={'#'} onClick={signOut}>Logout</Link>
+            <a target='_blank' href={'https://bot.dialogflow.com/78dbb90c-d231-4f93-a8a7-d23adbcb66b2'}>Chat with us</a>
           </li>
+          
         </ul>
       </nav>
       

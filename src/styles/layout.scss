@@ -57,6 +57,10 @@ body {
     justify-content: center;
     align-items: center;
 
+    background: url('/loginbg.jpg');
+    background-position: center;
+    background-size: cover;
+
     .login_wrap{
         background-color: #181818;
         width: 80%;
@@ -312,5 +316,20 @@ main{
         color: #FFFFFF;
         font-size: 20px;
         margin-right: 20px;
+    }
+}
+
+.login_anim{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    .gif{
+        width: 150px;
+    }
+
+    .overlay{
+        position: absolute;
+        width: 100px;
     }
 }

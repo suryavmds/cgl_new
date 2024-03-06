@@ -80,6 +80,9 @@ const PlayerDashboard = () => {
         <li>
             <Link href={'#'} onClick={signOut}>Logout</Link>
         </li>
+        <li>
+            <a target='_blank' href={'https://bot.dialogflow.com/78dbb90c-d231-4f93-a8a7-d23adbcb66b2'}>Chat with us</a>
+        </li>
         </ul>
     </nav>
 

@@ -40,6 +40,11 @@ const SignupPage = () =>{
         console.log(formValues)
         setLoading(true)
         try{
+            if(formValues.name == '' || formValues.nickname == "" || formValues.password == ""){
+                showToast("Enter required details", 'warning')
+                setLoading(false)
+                return;
+            }
             const requestData = {
                 formValues: formValues,
                 activeButton: activeButton
@@ -56,12 +61,22 @@ const SignupPage = () =>{
 
             const result = await response.json()
 
-            // if(result.status === 'success' && result.result.length){
-            //     const userAccess = result.result[0];
-            //     setUserAccess(userAccess)
-            //     context.setUserAccess(userAccess)
-            //     return;
-            // }
+            if(result.status === 'success' ){
+                setLoading(false)
+                showToast("User created successfully")
+
+                const res = await signIn('credentials', {
+                    email: formValues.nickname,
+                    password: formValues.password,
+                    redirect: false
+                  });
+                  setLoading(false);
+                  if (res.error == null) {
+                    router.replace(`/dashboard`);
+                  } else {
+                      showToast(res.error, 'error');
+                  }
+            }
             console.log(result)
         }catch(err){
             console.log(err)
@@ -82,15 +97,15 @@ const SignupPage = () =>{
                 </div>
                 <div className='middle_form'>
                     <div className='form_element'>
-                        <input placeholder='Name' name={'name'} onChange={inputHandler}
+                        <input placeholder='Name*' name={'name'} onChange={inputHandler}
                             value={formValues.name || ''}></input>
                     </div>
                     <div className='form_element'>
-                        <input placeholder='Nick Name' name={'nickname'} onChange={inputHandler}
+                        <input placeholder='Username*' name={'nickname'} onChange={inputHandler}
                             value={formValues.nickname || ''}></input>
                     </div>
                     <div className='form_element'>
-                        <input placeholder='password' name={'password'} onChange={inputHandler}
+                        <input type="password" placeholder='Password*' name={'password'} onChange={inputHandler}
                             value={formValues.password || ''}></input>
                     </div>
                     <div className='form_element'>
