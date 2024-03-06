@@ -37,15 +37,21 @@ const SignupPage = () =>{
     
 
     const submitLogin = async () => {
+        console.log(formValues)
         setLoading(true)
         try{
+            const requestData = {
+                formValues: formValues,
+                activeButton: activeButton
+            };
+    
             const response = await fetch('/api/users/createuser',
             {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'
                 },
-                body: JSON.stringify( formValues,activeButton)
+                body: JSON.stringify(requestData)
             })
 
             const result = await response.json()
@@ -57,7 +63,6 @@ const SignupPage = () =>{
             //     return;
             // }
             console.log(result)
-            showToast('Error while fetching user access!','error')
         }catch(err){
             console.log(err)
             showToast('Error while fetching user access!','error')
