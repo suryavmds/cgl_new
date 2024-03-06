@@ -5,9 +5,20 @@ import Link from 'next/link'
 import React from 'react'
 import { FaCalendarAlt } from 'react-icons/fa'
 import { GrGamepad } from 'react-icons/gr'
+import NewTourneyModal from '@/modals/NewTourneyModal'
+import { useState } from 'react'
 
 const HosterDashboardPage = () => {
+    const [isDrawerOpen, setDrawerOpen] = useState(false)
+    const [triggerEffect, setTriggerEffect] = useState(false);
+
+    const triggerCallback = () => {
+        setTriggerEffect(!triggerEffect)         
+      }
+      
   return (
+    <>
+    <NewTourneyModal isOpen={isDrawerOpen} showDrawer={setDrawerOpen} triggerSuccess={triggerCallback}/>
     <main>
     <nav className='cgl_nav'>
         <div>
@@ -29,9 +40,8 @@ const HosterDashboardPage = () => {
     <div className='cgl_padding'>
         <Space size={'large'}>
             <div className='text-white'>My tournaments</div>
-            <Link href={'/'}>
-            <Button type="primary">Create tournament <PlusOutlined /></Button>
-            </Link>
+              
+            <Button type="primary" onClick={() => setDrawerOpen(true)} >Create tournament <PlusOutlined /></Button>
         </Space>
 
         <section className="tourn_list small pt-20">
@@ -87,6 +97,7 @@ const HosterDashboardPage = () => {
 
 
     </main>
+    </>
   )
 }
 
