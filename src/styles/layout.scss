@@ -286,3 +286,31 @@ main{
 .pt-20{
     margin-top: 20px;
 }
+
+.profile_info{
+    h1{
+        color: #FFFFFF;
+        font-size: 30px;
+        margin-bottom: 15px;
+    }
+    h6{
+        color: #EE9016;
+        font-size: 16px;
+        font-weight: 200;
+    }
+}
+
+.cgl_wallet{
+    background-color: #181818;
+    display: inline-block;
+    padding: 8px;
+    p{
+        color: #656F81;
+        font-size: 14px;
+    }
+    h5{
+        color: #FFFFFF;
+        font-size: 20px;
+        margin-right: 20px;
+    }
+}
