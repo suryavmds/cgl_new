@@ -78,7 +78,7 @@ export default function Home() {
       
       <section className="tourn_list">
       {dataList.map((tournament, index) => (
-        <div key={index} className='tourn_item'>
+        <Link href={`/tourney/${tournament.id}`} key={index} className='tourn_item'>
           <div className='poster'>
             <img src='/pubgbg.jpeg' alt='poster'></img>
           </div>
@@ -93,7 +93,7 @@ export default function Home() {
               <h3><GrGamepad /> {tournament.count}/30 Joined</h3>
             </div>
           </div>
-        </div>
+        </Link>
           ))}
       </section>
     </main>

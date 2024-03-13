@@ -157,7 +157,7 @@ const HosterDashboardPage = () => {
         <section className="tourn_list small pt-20">
 
         {dataList.map((tournament, index) => (
-        <div key={index} className='tourn_item'>
+        <Link href={`/tourney/${tournament.id}`} key={index} className='tourn_item'>
           <div className='poster'>
             <img src='/pubgbg.jpeg' alt='poster'></img>
           </div>
@@ -172,7 +172,7 @@ const HosterDashboardPage = () => {
               <h3><GrGamepad /> {tournament.count}/30 Joined</h3>
             </div>
           </div>
-        </div>
+        </Link>
           ))}
 
             {/* <div className='tourn_item'>

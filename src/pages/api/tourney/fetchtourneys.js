@@ -1,7 +1,7 @@
 import db from '@/lib/db';
 import { withAuth } from '../withAuth';
 
-export default withAuth(async (req, res) => {
+export default (async (req, res) => {
   if (req.method === 'GET') {
     try {
       await db.beginTransaction();
