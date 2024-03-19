@@ -1,17 +1,19 @@
 import db from '@/lib/db';
 import { withAuth } from '../withAuth';
-import { defaultIconPrefixCls } from 'antd/es/config-provider';
-import { detectConflictingPaths } from 'next/dist/build/utils';
 // import { NULL } from 'sass';
 
 export default (async (req, res) => {
     if (req.method === 'POST') {
         try {
-            const { userId, tournamentId } = req.body;
+            let { userId, tournamentId } = req.body;
+
+            console.log(req.body)
+
+            // tournamentId = parseInt(tournamentId)
             
             await db.beginTransaction();
 
-            const sql = `SELECT * from tournaments WHERE id = 74`
+            const sql = `SELECT * from tournaments WHERE id = ?`
 
             const values = [tournamentId]
             
@@ -33,6 +35,7 @@ export default (async (req, res) => {
 
             const values4 = [userId]
 
+
             
             let response = await new Promise((resolve, reject) => {
                 db.query(sql, values, function (err, results, fields) {
@@ -40,11 +43,32 @@ export default (async (req, res) => {
                     else resolve(results);
                 });
             });
+
+            let response2 = await new Promise((resolve, reject) => {
+                db.query(sql2, values2, function (err, results, fields) {
+                    if (err) reject(err);
+                    else resolve(results);
+                });
+            });
+
+            const is_player = response2.some(item => {
+                return item.playersId === parseInt(userId)
+            })
+
+            let t_details = response.length ? response[0] : {}
+
+            let is_host = t_details.hostId === parseInt(userId)
+
+
             
-            console.log(response)
+            console.log(response2)
             
             await db.commit();
-            res.status(200).json({ status: 'success', message: 'order created' });
+            res.status(200).json({ status: 'success', message: 'order created', 
+            tourmey_details: t_details, 
+            is_host: is_host, 
+            players_registered: response2,
+            is_player_registered : is_player });
         } catch (err) {
             // If any one query got an error, all the previously ran queries will be reverted
             console.error(err);
