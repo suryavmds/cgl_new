@@ -1,10 +1,11 @@
 import { Button, Col, Row, Table } from 'antd';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ImTrophy } from "react-icons/im";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import showToast from '@/utility/showToast';
+import AppContext from '@/context/AppContext';
 
 const TournDetailPage = ({tournId}) => {
     const { data: session } = useSession();
@@ -12,6 +13,7 @@ const TournDetailPage = ({tournId}) => {
     const [isTableLoading, setTableLoading] = useState(false);
     const [selectedDetails, setSelectedDetails] = useState({});
     const [triggerEffects, setTriggerEffects] = useState(false);
+    const context = useContext(AppContext)
 
     const columns = [
         {
@@ -54,18 +56,29 @@ const TournDetailPage = ({tournId}) => {
         },
       ];
 
+      let button = <Link href={'/login'}><Button type="primary">Login to join</Button></Link>
+
       useEffect(() => {
         const fetchData = async () => {
           try {
               setTableLoading(true);
-              const response = await fetch('/api/tourney/details?id='+orderId);
-              const data = await response.json();
+              const response = await fetch('/api/tourney/details',
+              {
+                  method: 'POST',
+                  headers: {
+                  'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId})
+              })
+
+              const result = await response.json()
+              console.log(result)
               setTableLoading(false);
-          if (data.status === 'success' && data.results.length) {
-            setSelectedDetails(data.results[0]);
-            setDataList(data.styles)
+          if (result.status === 'success') {
+            setSelectedDetails(result);
+            setDataList(result.players_registered)
           } else {
-            showToast('Failed to fetch order', 'error')
+            showToast('Failed to fetch tournament details', 'error')
           }
           } catch (error) {
               console.error('Error fetching data:', error);
@@ -74,7 +87,50 @@ const TournDetailPage = ({tournId}) => {
         };
     
         fetchData();
+
       }, [triggerEffects]);
+
+      const formatDateTime = (datetimeString) => {
+        const dateTime = new Date(datetimeString);
+        const date = dateTime.toLocaleDateString('en-US');
+        const time = dateTime.toLocaleTimeString('en-US');
+        return `${date} ${time}`;
+      };
+
+      if(context.userInfo.user_id){
+        if(selectedDetails?.is_player_registered){
+          button = <Button danger type="primary" onClick={() => joinTourney(false)}>Leave tournament</Button>
+        }else{
+          button = <Button type="primary" onClick={() => joinTourney(true)}>Join tournament</Button>
+        }
+      }
+
+      const joinTourney = async (status) => {
+        try{
+          const response = await fetch('/api/tourney/join',
+          {
+              method: 'POST',
+              headers: {
+              'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId, status: status})
+          })
+
+          const result = await response.json()
+
+          if (result.status === 'success') {
+            setTriggerEffects(!triggerEffects)
+            showToast(`Successfully ${status ? 'joined' : 'leaved'} the tournament`, 'error')
+          } else {
+            showToast(`Failed to ${status ? 'join' : 'leave'}`, 'error')
+          }
+
+        }catch(Error){
+          console.log(Error)
+          showToast(`Failed to ${status ? 'join' : 'leave'}`, 'error')
+        }
+      }
+
   return (
     <>
     <main>
@@ -112,18 +168,18 @@ const TournDetailPage = ({tournId}) => {
         <div className='content'>
             <Row gutter={[15, 15]}>
                 <Col sm={24} md={12}>
-                    <h3 className='title'>Tournament Name</h3>
+                    <h3 className='title'>{selectedDetails?.tourmey_details?.tournament_name}</h3>
                 </Col>
                 <Col sm={24} md={12} className='flex'>
-                    <h5 className='date'><ImTrophy /> Reward: $5000</h5>
-                    <h5 className='date'><BsCalendar2DateFill /> Jan 5 10:10 AM</h5>
+                    <h5 className='date'><ImTrophy /> Reward: ${selectedDetails?.tourmey_details?.prize_money}</h5>
+                    <h5 className='date'><BsCalendar2DateFill /> {formatDateTime(selectedDetails?.tourmey_details?.tournament_date)}</h5>
                 </Col>
                 <Col sm={24} className='gap'>
-                    <Button type="primary">Join match</Button>
+                    {button}
                     <Button type="dashed">Set match finished</Button>
                 </Col>
                 <Col sm={24}>
-                    <Table columns={columns} dataSource={data} />
+                    <Table columns={columns} dataSource={dataList} />
                 </Col>
             </Row>
         </div>
