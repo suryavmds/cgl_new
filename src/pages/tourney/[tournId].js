@@ -120,7 +120,7 @@ const TournDetailPage = ({tournId}) => {
 
           if (result.status === 'success') {
             setTriggerEffects(!triggerEffects)
-            showToast(`Successfully ${status ? 'joined' : 'leaved'} the tournament`, 'error')
+            showToast(`Successfully ${status ? 'joined' : 'leaved'} the tournament`)
           } else {
             showToast(`Failed to ${status ? 'join' : 'leave'}`, 'error')
           }

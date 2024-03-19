@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.1",
+    "@google-cloud/dialogflow": "^6.4.0",
     "antd": "^5.15.0",
     "bcrypt": "^5.1.1",
+    "dialogflow": "^1.2.0",
+    "dialogflow-fulfillment": "^0.6.1",
     "eslint": "8.57.0",
     "eslint-config-next": "14.1.2",
     "jsonwebtoken": "^9.0.2",
