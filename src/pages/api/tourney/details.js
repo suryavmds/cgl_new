@@ -64,7 +64,7 @@ export default (async (req, res) => {
             console.log(response2)
             
             await db.commit();
-            res.status(200).json({ status: 'success', message: 'order created', 
+            res.status(200).json({ status: 'success', message: 'Details fetched successfully', 
             tourmey_details: t_details, 
             is_host: is_host, 
             players_registered: response2,
