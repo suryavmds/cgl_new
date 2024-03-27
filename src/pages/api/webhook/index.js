@@ -7,11 +7,19 @@ export default async function handler(req, res) {
   // Create a new Dialogflow WebhookClient instance
   const agent = new WebhookClient({ request: req, response: res });
 
+
+  const formatDateTime = (datetimeString) => {
+    const dateTime = new Date(datetimeString);
+    const date = dateTime.toLocaleDateString('en-US');
+    const time = dateTime.toLocaleTimeString('en-US');
+    return `${date} ${time}`;
+  };
+
   // Function to handle the webhook logic
   async function handleWebhook(agent) {
     try{
         await db.beginTransaction();
-        const sql = `SELECT tournament_name 
+        const sql = `SELECT tournament_name, tournament_date 
         FROM tournaments
         WHERE tournament_date > NOW();
         `;
@@ -28,8 +36,8 @@ export default async function handler(req, res) {
         await db.commit();
 
         if (response.length > 0) {
-            const stringified = response.map((row, index) => `${index + 1}. ${row.tournament_name}`).join(', ');
-            agent.add(`Hey gamer! These are the upcoming tourneys: ${stringified}`);
+            const stringified = response.map((row, index) => `${index + 1}. ${row.tournament_name} ${formatDateTime(row.tournament_date)} \n`).join(', ');
+            agent.add(`Hey gamer! These are the upcoming tourneys: \n ${stringified}`);
           } else {
             agent.add('No upcoming tournaments found.');
           }
