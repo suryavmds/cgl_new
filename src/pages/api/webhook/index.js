@@ -148,7 +148,7 @@ export default async function handler(req, res) {
 
       await db.beginTransaction();
 
-      const sql = `SELECT * FROM tournaments WHERE winner = ?;`;
+      const sql = `SELECT tournaments.tournament_name, tournaments.prize_money FROM players_profile RIGHT JOIN tournaments ON players_profile.userId = tournaments.winner WHERE players_profile.secret_code = ?;`;
 
       const values = [userId]
 
