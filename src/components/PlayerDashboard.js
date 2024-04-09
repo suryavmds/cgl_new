@@ -5,7 +5,8 @@ import { Button, Col, InputNumber, Modal, Row, Space } from 'antd'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { FaCalendarAlt } from 'react-icons/fa'
 
 const PlayerDashboard = () => {
     const context = useContext(AppContext)
@@ -13,6 +14,8 @@ const PlayerDashboard = () => {
     const [walletAmount, setWalletAmount] = useState(0)
     const [isSubmitLoading, setSubmitLoading] = useState(false);
     const router = useRouter();
+    const [dataList, setDataList] = useState([]);
+    const [triggerEffect, setTriggerEffect] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -61,6 +64,33 @@ const PlayerDashboard = () => {
     function formatCurrency(amount) {
         return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
+
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            // setTableLoading(true);
+            const response = await fetch('/api/tourney/playerdashlist?userId='+context.userInfo.user_id);
+            const data = await response.json();
+            if (data.status === 'success') {
+            setDataList(data.result.map(tournament => ({
+                ...tournament,
+                tournament_date: formatDateTime(tournament.tournament_date)
+            })));
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        };
+        fetchData();
+    }, [triggerEffect]);
+
+
+    const formatDateTime = (datetimeString) => {
+        const dateTime = new Date(datetimeString);
+        const date = dateTime.toLocaleDateString('en-US');
+        const time = dateTime.toLocaleTimeString('en-US');
+        return `${date} ${time}`;
+    };
   return (
     <main>
         <Modal confirmLoading={isSubmitLoading} title="Add credits to wallet" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} okText="Add credit">
@@ -111,6 +141,28 @@ const PlayerDashboard = () => {
             <Button type="primary">Join game <PlusOutlined /></Button>
             </Link>
         </Space>
+
+        <section className="tourn_list small pt-20">
+
+        {dataList.map((tournament, index) => (
+        <Link href={`/tourney/${tournament.tournament_id}`} key={index} className='tourn_item'>
+        <div className='poster'>
+            <img src='/pubgbg.jpeg' alt='poster'></img>
+        </div>
+        <div className='content'>
+            <h1>{tournament.tournament_name}</h1>
+            {/* <h4>Hoster Name :{tournament.username}</h4> */}
+            <h4>Entry Fee : {tournament.entry_fee}</h4>
+            <h4>Prize Money : {tournament.prize_money}</h4>
+
+            <div className='tags'>
+            <h3><FaCalendarAlt /> {tournament.tournament_date}</h3>
+            {/* <h3><GrGamepad /> {tournament.count}/30 Joined</h3> */}
+            </div>
+        </div>
+        </Link>
+        ))}
+        </section>
     </div>
 
 

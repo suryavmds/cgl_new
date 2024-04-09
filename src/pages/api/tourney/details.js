@@ -35,6 +35,7 @@ export default (async (req, res) => {
 
             const values4 = [userId]
 
+            const sql5 = `SELECT * FROM host_profile WHERE userId = ?`
 
             
             let response = await new Promise((resolve, reject) => {
@@ -51,6 +52,13 @@ export default (async (req, res) => {
                 });
             });
 
+            let response3 = await new Promise((resolve, reject) => {
+                db.query(sql5, values4, function (err, results, fields) {
+                    if (err) reject(err);
+                    else resolve(results);
+                });
+            });
+
             const is_player = response2.some(item => {
                 return item.playersId === parseInt(userId)
             })
@@ -58,17 +66,15 @@ export default (async (req, res) => {
             let t_details = response.length ? response[0] : {}
 
             let is_host = t_details.hostId === parseInt(userId)
-
-
-            
-            console.log(response2)
             
             await db.commit();
             res.status(200).json({ status: 'success', message: 'Details fetched successfully', 
             tourmey_details: t_details, 
             is_host: is_host, 
             players_registered: response2,
-            is_player_registered : is_player });
+            is_player_registered : is_player,
+            is_current_user_a_hoster: response3.length ? true : false
+            });
         } catch (err) {
             // If any one query got an error, all the previously ran queries will be reverted
             console.error(err);

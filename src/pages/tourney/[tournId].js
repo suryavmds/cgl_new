@@ -24,112 +24,123 @@ const TournDetailPage = ({tournId}) => {
           title: 'Player Name',
           dataIndex: 'name',
         },
-      ];
-      const data = [
-        {
-          key: '1',
-          name: 'aohn Brown',
-          id: 98,
-          math: 60,
-          english: 70,
-        },
-        {
-          key: '2',
-          name: 'Jim Green',
-          id: 98,
-          math: 66,
-          english: 89,
-        },
-        {
-          key: '3',
-          name: 'Joe Black',
-          id: 98,
-          math: 90,
-          english: 70,
-        },
-        {
-          key: '4',
-          name: 'Jim Red',
-          id: 88,
-          math: 99,
-          english: 89,
-        },
-      ];
+    ];
 
-      let button = <Link href={'/login'}><Button type="primary">Login to join</Button></Link>
+    const data = [
+      {
+        key: '1',
+        name: 'aohn Brown',
+        id: 98,
+        math: 60,
+        english: 70,
+      },
+      {
+        key: '2',
+        name: 'Jim Green',
+        id: 98,
+        math: 66,
+        english: 89,
+      },
+      {
+        key: '3',
+        name: 'Joe Black',
+        id: 98,
+        math: 90,
+        english: 70,
+      },
+      {
+        key: '4',
+        name: 'Jim Red',
+        id: 88,
+        math: 99,
+        english: 89,
+      },
+    ];
 
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-              setTableLoading(true);
-              const response = await fetch('/api/tourney/details',
-              {
-                  method: 'POST',
-                  headers: {
-                  'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId})
-              })
+    let button = <Link href={'/login'}><Button type="primary">Login to join</Button></Link>
 
-              const result = await response.json()
-              console.log(result)
-              setTableLoading(false);
-          if (result.status === 'success') {
-            setSelectedDetails(result);
-            setDataList(result.players_registered)
-          } else {
-            showToast('Failed to fetch tournament details', 'error')
-          }
-          } catch (error) {
-              console.error('Error fetching data:', error);
-              setTableLoading(false);
-          }
-        };
-    
-        fetchData();
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+            setTableLoading(true);
+            const response = await fetch('/api/tourney/details',
+            {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId})
+            })
 
-      }, [triggerEffects]);
-
-      const formatDateTime = (datetimeString) => {
-        const dateTime = new Date(datetimeString);
-        const date = dateTime.toLocaleDateString('en-US');
-        const time = dateTime.toLocaleTimeString('en-US');
-        return `${date} ${time}`;
+            const result = await response.json()
+            console.log(result)
+            setTableLoading(false);
+        if (result.status === 'success') {
+          setSelectedDetails(result);
+          setDataList(result.players_registered)
+        } else {
+          showToast('Failed to fetch tournament details', 'error')
+        }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setTableLoading(false);
+        }
       };
+  
+      fetchData();
 
-      if(context.userInfo.user_id){
-        if(selectedDetails?.is_player_registered){
-          button = <Button danger type="primary" onClick={() => joinTourney(false)}>Leave tournament</Button>
-        }else{
-          button = <Button type="primary" onClick={() => joinTourney(true)}>Join tournament</Button>
+    }, [triggerEffects]);
+
+    const formatDateTime = (datetimeString) => {
+      const dateTime = new Date(datetimeString);
+      const date = dateTime.toLocaleDateString('en-US');
+      const time = dateTime.toLocaleTimeString('en-US');
+      return `${date} ${time}`;
+    };
+
+    function formatCurrency(amount) {
+      return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
+
+    if(context.userInfo.user_id){
+      if(selectedDetails?.is_player_registered){
+        button = <Button danger type="primary" onClick={() => joinTourney(false)}>Leave tournament</Button>
+      }else{
+        button = <Button type="primary" onClick={() => joinTourney(true)}>Join for FREE</Button>
+        if(selectedDetails?.tourmey_details?.entry_fee){
+          button = <Button type="primary" onClick={() => joinTourney(true)}>Join for {formatCurrency(selectedDetails?.tourmey_details?.entry_fee)}</Button>
         }
       }
-
-      const joinTourney = async (status) => {
-        try{
-          const response = await fetch('/api/tourney/join',
-          {
-              method: 'POST',
-              headers: {
-              'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId, status: status})
-          })
-
-          const result = await response.json()
-
-          if (result.status === 'success') {
-            setTriggerEffects(!triggerEffects)
-            showToast(`Successfully ${status ? 'joined' : 'leaved'} the tournament`)
-          } else {
-            showToast(result.message)
-          }
-
-        }catch(Error){
-          console.log(Error)
-          showToast(`Failed to ${status ? 'join' : 'leave'}`, 'error')
-        }
+      if(selectedDetails?.is_current_user_a_hoster){
+        button = <></>
       }
+    }
+
+    const joinTourney = async (status) => {
+      try{
+        const response = await fetch('/api/tourney/join',
+        {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userId: context.userInfo.user_id, tournamentId: tournId, status: status})
+        })
+
+        const result = await response.json()
+
+        if (result.status === 'success') {
+          setTriggerEffects(!triggerEffects)
+          showToast(`Successfully ${status ? 'joined' : 'leaved'} the tournament`)
+        } else {
+          showToast(result.message, 'error')
+        }
+
+      }catch(Error){
+        console.log(Error)
+        showToast(`Failed to ${status ? 'join' : 'leave'}`, 'error')
+      }
+    }
 
   return (
     <>
@@ -176,7 +187,11 @@ const TournDetailPage = ({tournId}) => {
                 </Col>
                 <Col sm={24} className='gap'>
                     {button}
-                    <Button type="dashed">Set match finished</Button>
+                    {
+                      selectedDetails?.is_host ? 
+                      <Button type="dashed">Set match finished</Button>
+                      : <></>
+                    }
                 </Col>
                 <Col sm={24}>
                     <Table columns={columns} dataSource={dataList} />
