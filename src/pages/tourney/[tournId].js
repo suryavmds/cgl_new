@@ -6,6 +6,7 @@ import { ImTrophy } from "react-icons/im";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import showToast from '@/utility/showToast';
 import AppContext from '@/context/AppContext';
+import TournamentStatus from '@/modals/TournamentStatus';
 
 const TournDetailPage = ({tournId}) => {
     const { data: session } = useSession();
@@ -14,6 +15,17 @@ const TournDetailPage = ({tournId}) => {
     const [selectedDetails, setSelectedDetails] = useState({});
     const [triggerEffects, setTriggerEffects] = useState(false);
     const context = useContext(AppContext)
+    const [isDrawerOpen, setDrawerOpen] = useState(false)
+    const [triggerEffect, setTriggerEffect] = useState(false);
+
+
+    const matchStatusUpdate = () => {
+      setDrawerOpen(true)
+    };
+
+    const triggerCallback = () => {
+      setTriggerEffect(!triggerEffect)         
+    }
 
     const columns = [
         {
@@ -144,6 +156,7 @@ const TournDetailPage = ({tournId}) => {
 
   return (
     <>
+    <TournamentStatus isOpen={isDrawerOpen} showDrawer = {setDrawerOpen} triggerSuccess={triggerCallback} tournId={tournId}  ></TournamentStatus>
     <main>
     <nav className='cgl_nav'>
         <div>
@@ -189,7 +202,7 @@ const TournDetailPage = ({tournId}) => {
                     {button}
                     {
                       selectedDetails?.is_host ? 
-                      <Button type="dashed">Set match finished</Button>
+                      <Button type="dashed" onClick={matchStatusUpdate}>Set match finished</Button>
                       : <></>
                     }
                 </Col>
