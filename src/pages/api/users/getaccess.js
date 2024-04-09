@@ -9,7 +9,7 @@ export default withAuth(async (req, res) => {
             let data = {}
             
             await db.beginTransaction();
-            let sql = `SELECT player_name, nick_name, phone_number, country, about, wallet_balance 
+            let sql = `SELECT player_name, nick_name, phone_number, country, about, wallet_balance, secret_code 
             FROM players_profile
             WHERE userId = ?
             `;
@@ -33,7 +33,7 @@ export default withAuth(async (req, res) => {
             data = {...data, user_id: response[0]?.id, user_role: response[0]?.role}
 
             if(response[0]?.role == 3){
-                sql = `SELECT host_name, nick_name, phone_number, country, about, wallet_balance 
+                sql = `SELECT host_name, nick_name, phone_number, country, about, wallet_balance, secret_code 
                 FROM host_profile
                 WHERE userId = ?
                 `;

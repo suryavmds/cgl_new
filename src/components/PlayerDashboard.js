@@ -121,6 +121,7 @@ const PlayerDashboard = () => {
             <Col lg={12} md={24}>
                 <h1>Welcome {context.userInfo.user_details.player_name}!</h1>
                 <h6>Player dashboard</h6>
+                <h6>Secret Code: {context.userInfo.user_details.secret_code}</h6>
             </Col>
             <Col lg={12} md={24}>
                 <div className='cgl_wallet'>

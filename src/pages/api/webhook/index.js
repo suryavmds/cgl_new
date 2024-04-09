@@ -53,7 +53,7 @@ export default async function handler(req, res) {
       const { userId } = agent.parameters;
 
       if (!userId) {
-        agent.add('Could you please provide your user ID?');
+        agent.add('Could you please provide your CGL secret code?');
         return;
       }
 
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       // Fetch wallet balance of the user based on the provided user ID
       const sql = `SELECT wallet_balance 
                    FROM players_profile
-                   WHERE userId = ?`;
+                   WHERE secret_code = ?`;
 
       const values = [userId]
 
@@ -89,10 +89,58 @@ export default async function handler(req, res) {
     }
   }
 
+  async function handleMyTournaments(agent) {
+    try {
+      const { userId } = agent.parameters;
+
+      if (!userId) {
+        agent.add('Could you please provide your CGL secret code?');
+        return;
+      }
+
+      await db.beginTransaction();
+
+      // Fetch wallet balance of the user based on the provided user ID
+      const sql = `SELECT 
+      (SELECT tournaments.id FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS tournament_id,
+      (SELECT tournaments.tournament_name FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS tournament_name,
+      (SELECT tournaments.tournament_date FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS tournament_date,
+      (SELECT tournaments.entry_fee FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS entry_fee,
+      (SELECT tournaments.tournament_status FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS tournament_status,
+      (SELECT tournaments.prize_money FROM tournaments WHERE tournaments.id = players_registered.tournamentId) AS prize_money
+      FROM 
+      players_registered WHERE
+      playersId = ?;`;
+
+      const values = [userId]
+
+      // Executing query with parameterized values
+        const response = await new Promise((resolve, reject) => {
+            db.query(sql, values, function (err, results, fields) {
+            if (err) reject(err);
+            else resolve(results);
+            });
+        });
+
+      await db.commit();
+
+      if (response.length > 0) {
+        const stringified = response.map((row, index) => `${index + 1}. ${row.tournament_name} ${formatDateTime(row.tournament_date)} \n`).join(', ');
+        agent.add(`Your registered tourneys: \n ${stringified}`);
+      } else {
+        agent.add('Player not found or no matches available.');
+      }
+    } catch (err) {
+      console.error('Error fetching your registered tourneys:', err);
+      await db.rollback();
+      agent.add('Ouch! There is some error fetching tourneys list right now. Please try again later.');
+    }
+  }
 
   // Map the intent to the corresponding handler function
   let intentMap = new Map();
   intentMap.set('upcomingTournaments', handleWebhook);
   intentMap.set('walletBalance', handleWalletBalance);
+  intentMap.set('myTournaments', handleMyTournaments);
   agent.handleRequest(intentMap);
 }
