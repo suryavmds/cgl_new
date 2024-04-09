@@ -137,10 +137,49 @@ export default async function handler(req, res) {
     }
   }
 
+  async function handleMatchesWon(agent) {
+    try {
+      const { userId } = agent.parameters;
+
+      if (!userId) {
+        agent.add('Could you please provide your CGL secret code?');
+        return;
+      }
+
+      await db.beginTransaction();
+
+      const sql = `SELECT * FROM tournaments WHERE winner = ?;`;
+
+      const values = [userId]
+
+      // Executing query with parameterized values
+        const response = await new Promise((resolve, reject) => {
+            db.query(sql, values, function (err, results, fields) {
+            if (err) reject(err);
+            else resolve(results);
+            });
+        });
+
+      await db.commit();
+
+      if (response.length > 0) {
+        const stringified = response.map((row, index) => `${index + 1}. ${row.tournament_name} - Prize won:${row.prize_money} \n`).join(', ');
+        agent.add(`Your registered tourneys: \n ${stringified}`);
+      } else {
+        agent.add('Player not found or no matches available.');
+      }
+    } catch (err) {
+      console.error('Error fetching your tourneys list:', err);
+      await db.rollback();
+      agent.add('Ouch! There is some error fetching tourneys list right now. Please try again later.');
+    }
+  }
+
   // Map the intent to the corresponding handler function
   let intentMap = new Map();
   intentMap.set('upcomingTournaments', handleWebhook);
   intentMap.set('walletBalance', handleWalletBalance);
   intentMap.set('myTournaments', handleMyTournaments);
+  intentMap.set('matchesWon', handleMatchesWon);
   agent.handleRequest(intentMap);
 }

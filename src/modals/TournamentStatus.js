@@ -56,31 +56,30 @@ const onSelectChangeHandler = (value, name) => {
     });
 }
 
-
-useEffect(() => {
+  useEffect(() => {
     const fetchDetails = async () => {
-        try {
-          const response = await fetch(`/api/tourney/tournamentplayers?tournId=${tournId}`, { method: 'GET' });
-          const result = await response.json();
-          if (result.status === 'success') {
-            if (result.result.length) {
-                let tempArr = []
-                result.result.map((item) => {
-                  tempArr.push({
-                    label: item.name,
-                    tournamentId: item.tournamentId,
-                    value: item.playersId
-                  })
+      try {
+        const response = await fetch(`/api/tourney/tournamentplayers?tournId=${tournId}`, { method: 'GET' });
+        const result = await response.json();
+        if (result.status === 'success') {
+          if (result.result.length) {
+              let tempArr = []
+              result.result.map((item) => {
+                tempArr.push({
+                  label: item.name,
+                  tournamentId: item.tournamentId,
+                  value: item.playersId
                 })
-                setPlayersList(tempArr)
-              }
-          }
-        } catch (error) {
-          console.log(error);
+              })
+              setPlayersList(tempArr)
+            }
         }
-      };
-      fetchDetails();
-    }, [isOpen, tournId]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDetails();
+  }, [isOpen, tournId]);
 
     // console.log("this i smy my array", playersList)
 
@@ -111,8 +110,9 @@ useEffect(() => {
           <Row gutter={16}>
             <Col xs={24} lg={12}>
             <Form.Item
-                name="winner"
+              name="winner"
               label="Winner"
+              rules={[{ required: true, message: 'Winner is required' }]}
               >
                 <Select
                   showSearch
@@ -128,7 +128,7 @@ useEffect(() => {
             </Col>
             <Col xs={24} lg={12}>
             <Form.Item
-                name="runner"
+              name="runner"
               label="Runner"
               >
                 <Select

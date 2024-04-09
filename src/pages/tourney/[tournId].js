@@ -7,6 +7,7 @@ import { BsCalendar2DateFill } from "react-icons/bs";
 import showToast from '@/utility/showToast';
 import AppContext from '@/context/AppContext';
 import TournamentStatus from '@/modals/TournamentStatus';
+import { StarOutlined } from '@ant-design/icons';
 
 const TournDetailPage = ({tournId}) => {
     const { data: session } = useSession();
@@ -28,14 +29,25 @@ const TournDetailPage = ({tournId}) => {
     }
 
     const columns = [
-        {
-          title: 'ID',
-          dataIndex: 'id',
+      {
+        title: 'ID',
+        dataIndex: 'playersId',
+      },
+      {
+        title: 'Player Name',
+        dataIndex: 'name',
+        render: (text, record) => {
+          if (record.playersId === selectedDetails?.tourmey_details?.winner) {
+            return (
+              <span>
+                {text} <StarOutlined />
+              </span>
+            );
+          } else {
+            return text;
+          }
         },
-        {
-          title: 'Player Name',
-          dataIndex: 'name',
-        },
+      },
     ];
 
     const data = [
@@ -201,9 +213,12 @@ const TournDetailPage = ({tournId}) => {
                 <Col sm={24} className='gap'>
                     {button}
                     {
-                      selectedDetails?.is_host ? 
+                      (selectedDetails?.is_host && !selectedDetails?.tourmey_details?.tournament_status) ? 
                       <Button type="dashed" onClick={matchStatusUpdate}>Set match finished</Button>
                       : <></>
+                    }
+                    {
+                      selectedDetails?.tourmey_details?.tournament_status ? <h5 className='date'>Tournament finished!</h5> : <></>
                     }
                 </Col>
                 <Col sm={24}>
